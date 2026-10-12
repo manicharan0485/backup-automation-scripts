@@ -1,8 +1,8 @@
 # 🗄️ Backup Automation Scripts
 
-A collection of production-ready scripts and Terraform configs for automating backup workflows across AWS and Azure environments.
+A collection of scripts and Terraform configs for automating backup checks and restore tests on AWS.
 
-Built from real-world experience managing backup and recovery environments for enterprise clients.
+> 🧪 **Reference / lab project.** Original practice code written to demonstrate the approach. It is not taken from an employer's codebase. Review and adapt before using it in your own environment.
 
 ---
 
@@ -30,7 +30,6 @@ backup-automation-scripts/
 - ✅ CloudWatch alerting for backup anomalies (size, status, duration)
 - ✅ Daily backup status reporting via email (SES)
 - ✅ Terraform-managed AWS Backup lifecycle policies
-- ✅ 20% reduction in manual operational effort
 
 ---
 
