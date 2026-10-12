@@ -1,0 +1,94 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "CloudWatch Alarms for RDS Backup Monitoring",
+  "Parameters": {
+    "DBIdentifier": {
+      "Type": "String",
+      "Description": "RDS DB Instance Identifier to monitor"
+    },
+    "AlertEmail": {
+      "Type": "String",
+      "Description": "Email address for alarm notifications"
+    }
+  },
+  "Resources": {
+    "BackupAlertTopic": {
+      "Type": "AWS::SNS::Topic",
+      "Properties": {
+        "TopicName": "backup-alerts",
+        "Subscription": [
+          {
+            "Protocol": "email",
+            "Endpoint": { "Ref": "AlertEmail" }
+          }
+        ]
+      }
+    },
+    "SnapshotValidAlarm": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "AlarmName": "rds-snapshot-invalid",
+        "AlarmDescription": "Triggers when RDS snapshot validation fails (0 = failed)",
+        "Namespace": "BackupMonitoring",
+        "MetricName": "SnapshotValid",
+        "Dimensions": [
+          {
+            "Name": "DBIdentifier",
+            "Value": { "Ref": "DBIdentifier" }
+          }
+        ],
+        "Statistic": "Minimum",
+        "Period": 3600,
+        "EvaluationPeriods": 1,
+        "Threshold": 1,
+        "ComparisonOperator": "LessThanThreshold",
+        "TreatMissingData": "breaching",
+        "AlarmActions": [ { "Ref": "BackupAlertTopic" } ],
+        "OKActions":    [ { "Ref": "BackupAlertTopic" } ]
+      }
+    },
+    "RDSFreeStorageAlarm": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "AlarmName": "rds-low-free-storage",
+        "AlarmDescription": "RDS free storage below 10GB — backup may fail",
+        "Namespace": "AWS/RDS",
+        "MetricName": "FreeStorageSpace",
+        "Dimensions": [
+          {
+            "Name": "DBInstanceIdentifier",
+            "Value": { "Ref": "DBIdentifier" }
+          }
+        ],
+        "Statistic": "Average",
+        "Period": 300,
+        "EvaluationPeriods": 2,
+        "Threshold": 10737418240,
+        "ComparisonOperator": "LessThanThreshold",
+        "AlarmActions": [ { "Ref": "BackupAlertTopic" } ]
+      }
+    },
+    "BackupJobFailedAlarm": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "AlarmName": "aws-backup-job-failed",
+        "AlarmDescription": "AWS Backup job failure detected",
+        "Namespace": "AWS/Backup",
+        "MetricName": "NumberOfBackupJobsFailed",
+        "Statistic": "Sum",
+        "Period": 3600,
+        "EvaluationPeriods": 1,
+        "Threshold": 1,
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "TreatMissingData": "notBreaching",
+        "AlarmActions": [ { "Ref": "BackupAlertTopic" } ]
+      }
+    }
+  },
+  "Outputs": {
+    "SNSTopicArn": {
+      "Description": "ARN of the backup alerts SNS topic",
+      "Value": { "Ref": "BackupAlertTopic" }
+    }
+  }
+}
