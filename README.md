@@ -123,4 +123,5 @@ terraform apply
 
 **Manicharan Ravi** — IT Specialist & Cloud Engineer  
 📧 manicharan.ravi999@gmail.com  
-🔗 [linkedin.com/in/manicharan-ravi](https://linkedin.com/in/manicharan-ravi)
+🔗 [linkedin.com/in/manicharan-ravi](https://linkedin.com/in/manicharan-ravi)  
+🌐 [Portfolio](https://manicharan0485.github.io) · [LinkedIn](https://linkedin.com/in/manicharan-ravi)
